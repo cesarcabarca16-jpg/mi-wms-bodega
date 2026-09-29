@@ -49,7 +49,7 @@ def generar_bodega_real():
     # 4. PASILLOS CON DOBLE PROFUNDIDAD ESTÁNDAR (Foxtrot, Golfo, November)
     pasillos_dobles = [("Foxtrot", 7), ("Golfo", 7), ("November", 4)]
     for p_nombre, max_pos in pasillos_dobles:
-        p_letra = p_nombre[0]
+        p_letra = p_nombre[0]  # F, G, N
         for pos in range(1, max_pos + 1):       
             for nivel in range(1, 6):
                 for lado in:
