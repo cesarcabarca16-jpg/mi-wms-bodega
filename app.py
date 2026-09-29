@@ -115,8 +115,10 @@ if rol == "Operario / Montacarguista":
             
             # --- LÓGICA DE VALIDACIÓN PARA DOBLE PROFUNDIDAD Y CUARTOS ---
             cod_fondo = ""
-            if ubicacion.endswith("A"): cod_fondo = ubicacion.replace("A", "B")
-            elif ubicacion.endswith("-FR"): cod_fondo = ubicacion.replace("-FR", "-FO")
+            if ubicacion.endswith("A"): 
+                cod_fondo = ubicacion.replace("A", "B")
+            elif ubicacion.endswith("-FR"): 
+                cod_fondo = ubicacion.replace("-FR", "-FO")
                 
             if cod_fondo:
                 fila_fondo = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == cod_fondo]
@@ -131,8 +133,7 @@ if rol == "Operario / Montacarguista":
             btn_confirmar = st.form_submit_button("Confirmar Ubicación en Bodega")
             
             if btn_confirmar and sku:
-                # --- SOLUCIÓN DEL ERROR USANDO EL ÍNDICE CORRECTO (.index[0]) ---
-                idx = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion].index[0]
+                idx = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion].index
                 st.session_state.inventario.at[idx, 'Estado'] = 'Ocupado'
                 st.session_state.inventario.at[idx, 'Producto'] = sku
                 st.session_state.inventario.at[idx, 'Cantidad'] = cant
