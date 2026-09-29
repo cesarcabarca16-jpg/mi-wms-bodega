@@ -92,7 +92,7 @@ if 'mapa_bodega' not in st.session_state:
 if 'tabla_carga' not in st.session_state:
     st.session_state.tabla_carga = pd.DataFrame(columns=["AWB", "Cliente", "Piezas", "Peso_Kg", "Dimensiones", "Ubicacion", "Fecha_Ingreso", "Tareas_Asignadas", "Estado_Tarea"])
 
-# Menu Lateral Plano sin condicionales de identación
+# Menu Lateral Plano
 modulo = st.sidebar.radio("📂 SELECCIONE MÓDULO WMS:", [
     "Warehouse Receipt (Ingreso)",
     "Control de Inventario & Traslados",
@@ -101,23 +101,22 @@ modulo = st.sidebar.radio("📂 SELECCIONE MÓDULO WMS:", [
     "Cargo Release (Salida Carga)"
 ])
 
-# --- CONTROLADORES INDEPENDIENTES (FLAT CODE) ---
+# --- CONTROLADORES INDEPENDIENTES (PLANO SIN BLOCKS COMPLEJOS) ---
 
 if modulo == "Warehouse Receipt (Ingreso)":
     st.subheader("📥 MÓDULO: Warehouse Receipt (Ingreso de Carga)")
     df_libres = st.session_state.mapa_bodega[st.session_state.mapa_bodega['Estado'] == 'Libre']
     
-    with st.form("form_registro_ingreso"):
-        awb = st.text_input("Número de Guía (AWB):")
-        cliente = st.text_input("Consignee / Cliente:")
-        piezas = st.number_input("Número de Piezas (Bultos):", min_value=1, value=1)
-        peso = st.number_input("Gross Weight (Peso en Kg):", min_value=0.1, value=10.0)
-        dims = st.text_input("Dimensions (L x A x Al en cm):")
-        ubicacion = st.selectbox("Assign Initial Storage:", df_libres['Codigo_Ubicacion'])
-        dias_atras = st.slider("Simular días de ingreso hacia atrás:", 0, 15, 0)
-        
-        btn_ingreso = st.form_submit_button("💾 Guardar Transacción & Emitir Recibo")
-        if btn_ingreso and awb:
+    awb = st.text_input("Número de Guía (AWB):")
+    cliente = st.text_input("Consignee / Cliente:")
+    piezas = st.number_input("Número de Piezas (Bultos):", min_value=1, value=1)
+    peso = st.number_input("Gross Weight (Peso en Kg):", min_value=0.1, value=10.0)
+    dims = st.text_input("Dimensions (L x A x Al en cm):")
+    ubicacion = st.selectbox("Assign Initial Storage:", df_libres['Codigo_Ubicacion'])
+    dias_atras = st.slider("Simular días de ingreso hacia atrás:", 0, 15, 0)
+    
+    if st.button("💾 Guardar Transacción & Emitir Recibo"):
+        if awb:
             fecha_ingreso = datetime.now() - timedelta(days=dias_atras)
             nueva_carga = {"AWB": awb, "Cliente": cliente, "Piezas": piezas, "Peso_Kg": peso, "Dimensiones": dims, "Ubicacion": ubicacion, "Fecha_Ingreso": fecha_ingreso, "Tareas_Asignadas": "Ninguna", "Estado_Tarea": "N/A"}
             st.session_state.tabla_carga = pd.concat([st.session_state.tabla_carga, pd.DataFrame([nueva_carga])], ignore_index=True)
@@ -141,10 +140,10 @@ elif modulo == "Control de Inventario & Traslados":
             st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'] == ub_antigua, 'Estado'] = 'Libre'
             st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'] == nueva_ub, 'Estado'] = 'Ocupado'
             st.session_state.tabla_carga.loc[st.session_state.tabla_carga['AWB'] == awb_mover, 'Ubicacion'] = nueva_ub
-            st.success(f"✔️ TRANSFER SUCCESSFUL: Movida de {ub_antigua} a {nueva_ub}.")
+            st.success(f"✔️ TRANSFER SUCCESSFUL: Carga trasladada.")
             st.rerun()
 
 elif modulo == "Operaciones & Tareas Especiales":
     st.subheader("📋 MÓDULO: Control de Tareas Especiales sobre la Carga")
     if not st.session_state.tabla_carga.empty:
-        with st.form("form_tareas"):
+        awb_tarea = st.selectbox("Seleccione AWB para programar operación:", st.session_state.tabla_carga['AWB'])
