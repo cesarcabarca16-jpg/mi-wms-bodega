@@ -2,33 +2,54 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Configuración de pantalla estilo Terminal Corporativa
-st.set_page_config(page_title="Advanced WMS - Magaya Alternative", page_icon="⚙️", layout="wide")
+# Configuración de la interfaz estilo Terminal Aduanera Profesional
+st.set_page_config(page_title="Magaya Workspace Pro - BOG HUB", page_icon="⚙️", layout="wide")
 
-# Estilos visuales grises corporativos
+# Estilos CSS avanzados para imitar el look corporativo de Magaya y etiquetas
 st.markdown("""
     <style>
-    .stButton>button { background-color: #1f3a60; color: white; font-weight: bold; border-radius: 4px; width: 100%; height: 45px; }
-    .stButton>button:hover { background-color: #2b579a; color: white; }
-    .magaya-header { background-color: #1a252f; color: white; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-family: monospace; }
-    .status-bar { background-color: #e2e8f0; padding: 10px; border-radius: 4px; border-left: 5px solid #1f3a60; font-size: 13px; font-family: monospace; margin-bottom: 20px; }
+    .stButton>button {
+        background-color: #1f3a60;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        width: 100%;
+        height: 40px;
+        font-size: 13px;
+        border: 1px solid #1a252f;
+    }
+    .stButton>button:hover { background-color: #2b579a; color: white; border-color: #2b579a; }
+    .magaya-header { background-color: #141d26; color: white; padding: 18px; border-radius: 4px; margin-bottom: 5px; font-family: 'Courier New', monospace; border-bottom: 4px solid #2b579a; }
+    .status-bar { background-color: #cbd5e1; padding: 8px; border-radius: 4px; border-left: 5px solid #1f3a60; font-size: 12px; font-family: monospace; margin-bottom: 15px; color: #0f172a; }
+    .label-box {
+        background-color: #ffffff;
+        padding: 15px;
+        border: 2px dashed #000000;
+        border-radius: 4px;
+        color: #000000;
+        font-family: monospace;
+        margin-top: 15px;
+        max-width: 400px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
+# Cabecera Corporativa de Magaya Workspace
 st.markdown("""
     <div class="magaya-header">
-        <h2 style='margin:0; color:white;'>⚙️ ADVANCED WORKSPACE - CARGO & LOGISTICS SYSTEM</h2>
-        <span style='font-size:12px;'>Módulos Integrados de Recibo, Inventario, Tareas, Facturación y Despacho | Usuarios: Ilimitados</span>
+        <h2 style='margin:0; color:white; font-size:22px;'>⚙️ MAGAYA ENTERPRISE SYSTEM v13.5 - IN-HOUSE HUB</h2>
+        <span style='font-size:12px; color:#94a3b8;'>Ecosistema de Comercio Exterior y Almacenaje Aeronáutico | Terminal de Carga El Dorado</span>
     </div>
 """, unsafe_allow_html=True)
 
+fecha_actual = datetime.now().strftime("%d/%m/%Y %H:%M")
 st.markdown(f"""
     <div class="status-bar">
-        <strong>SISTEMA:</strong> CORPORATIVO | <strong>SEDE:</strong> BOG_HUB_CARGO | <strong>CONEXIÓN:</strong> CLOUD_SECURE
+        <strong>ESTADO NODE:</strong> CONECTADO MIGRACIÓN DIAN | <strong>PERFIL:</strong> OPERARIO_MASTER | <strong>FECHA SIMULACIÓN:</strong> {fecha_actual} | <strong>LICENCIAS:</strong> ILIMITADAS
     </div>
 """, unsafe_allow_html=True)
 
-# --- GENERADOR PLANO DEL MAPA DE LA BODEGA REAL ---
+# --- GENERADOR DEL MAPA DE LA BODEGA REAL ---
 @st.cache_data
 def generar_bodega_real():
     lista_ubicaciones = []
@@ -39,7 +60,7 @@ def generar_bodega_real():
             for ld in lados:
                 lista_ubicaciones.append({"Codigo_Ubicacion": f"A{pos:02d}{nivel:02d}{ld}", "Pasillo_Zona": "Alpha", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre"})
                 
-    for pos in range(1, 9):       
+    for pos in range(1, 8):       
         for nivel in range(1, 6):
             for ld in lados:
                 lista_ubicaciones.append({"Codigo_Ubicacion": f"B{pos:02d}{nivel:02d}{ld}", "Pasillo_Zona": "Bravo", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre"})
@@ -85,65 +106,52 @@ def generar_bodega_real():
 
     return pd.DataFrame(lista_ubicaciones)
 
-# Inicializar estados persistentes
+# --- INICIALIZACIÓN PERMANENTE DE DATOS OPERATIVOS ---
 if 'mapa_bodega' not in st.session_state:
     st.session_state.mapa_bodega = generar_bodega_real()
 
 if 'tabla_carga' not in st.session_state:
-    st.session_state.tabla_carga = pd.DataFrame(columns=["AWB", "Cliente", "Piezas", "Peso_Kg", "Dimensiones", "Ubicacion", "Fecha_Ingreso", "Tareas_Asignadas", "Estado_Tarea"])
+    fecha_base = datetime.now()
+    st.session_state.tabla_carga = pd.DataFrame([
+        {"AWB": "020-98765432", "Cliente": "Importaciones de Colombia S.A.", "Piezas": 12, "Peso_Kg": 450.0, "Dimensiones": "120x100x160", "Ubicacion": "A010101", "Fecha_Ingreso": fecha_base - timedelta(days=8), "Tareas_Asignadas": "Aforo Aduanero DIAN", "Estado_Tarea": "En Inspección", "Retencion_DIAN": True},
+        {"AWB": "134-55544431", "Cliente": "Farma Bogota Logistics", "Piezas": 5, "Peso_Kg": 85.5, "Dimensiones": "60x60x80", "Ubicacion": "FRIO-01", "Fecha_Ingreso": fecha_base - timedelta(days=3), "Tareas_Asignadas": "Sustitución de Hielo Seco", "Estado_Tarea": "Pendiente", "Retencion_DIAN": False}
+    ])
+    st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'].isin(["A010101", "FRIO-01"]), 'Estado'] = 'Ocupado'
 
-# Menu Lateral Plano
-modulo = st.sidebar.radio("📂 SELECCIONE MÓDULO WMS:", [
-    "Warehouse Receipt (Ingreso)",
-    "Control de Inventario & Traslados",
-    "Operaciones & Tareas Especiales",
-    "Liquidación & Facturación",
-    "Cargo Release (Salida Carga)"
+if 'ultimo_qr_data' not in st.session_state:
+    st.session_state.ultimo_qr_data = None
+
+# --- PANEL LATERAL DE NAVEGACIÓN ---
+st.sidebar.markdown("### 🖥 nighttime CONTROL DE MÓDULOS")
+modulo = st.sidebar.radio("Navegación Magaya Workspace:", [
+    "1. Warehouse Receipt (Ingreso)",
+    "2. Control de Inventario & Traslados",
+    "3. Operaciones DIAN & Tareas Especiales",
+    "4. Liquidación & Facturación Comercial",
+    "5. Cargo Release (Salida de Carga)"
 ])
 
-# --- CONTROLADORES INDEPENDIENTES (PLANO SIN BLOCKS COMPLEJOS) ---
-
-if modulo == "Warehouse Receipt (Ingreso)":
-    st.subheader("📥 MÓDULO: Warehouse Receipt (Ingreso de Carga)")
+# ===================================================
+# MÓDULO 1: WAREHOUSE RECEIPT (INGRESO DE CARGA & QR)
+# ===================================================
+if "1." in modulo:
+    st.subheader("📥 MÓDULO: Warehouse Receipt (Ingreso de Carga & Impresión de QR)")
     df_libres = st.session_state.mapa_bodega[st.session_state.mapa_bodega['Estado'] == 'Libre']
     
-    awb = st.text_input("Número de Guía (AWB):")
-    cliente = st.text_input("Consignee / Cliente:")
-    piezas = st.number_input("Número de Piezas (Bultos):", min_value=1, value=1)
-    peso = st.number_input("Gross Weight (Peso en Kg):", min_value=0.1, value=10.0)
-    dims = st.text_input("Dimensions (L x A x Al en cm):")
-    ubicacion = st.selectbox("Assign Initial Storage:", df_libres['Codigo_Ubicacion'])
-    dias_atras = st.slider("Simular días de ingreso hacia atrás:", 0, 15, 0)
-    
-    if st.button("💾 Guardar Transacción & Emitir Recibo"):
-        if awb:
+    col_x, col_y = st.columns(2)
+    with col_x:
+        awb = st.text_input("Air Waybill Number (Guía AWB):", placeholder="000-00000000")
+        cliente = st.text_input("Consignee Name (Cliente / Importador):")
+        piezas = st.number_input("Total Pieces (Bultos):", min_value=1, value=1)
+        ret_dian = st.checkbox("¿Registra Alerta / Inspección DIAN?", value=False)
+    with col_y:
+        peso = st.number_input("Gross Weight (Peso Bruto Kg):", min_value=0.1, value=50.0)
+        dims = st.text_input("Dimensions (Largo x Ancho x Alto cm):", placeholder="120x80x100")
+        ubicacion = st.selectbox("Assign Storage Location (Ubicaciones Libres):", df_libres['Codigo_Ubicacion'])
+        dias_atras = st.slider("Antigüedad simulada (Días en bodega):", 0, 15, 0)
+
+    if st.button("💾 SAVE TRANSACTION & GENERATE LABELS"):
+        if awb and cliente:
             fecha_ingreso = datetime.now() - timedelta(days=dias_atras)
-            nueva_carga = {"AWB": awb, "Cliente": cliente, "Piezas": piezas, "Peso_Kg": peso, "Dimensiones": dims, "Ubicacion": ubicacion, "Fecha_Ingreso": fecha_ingreso, "Tareas_Asignadas": "Ninguna", "Estado_Tarea": "N/A"}
+            nueva_carga = {"AWB": awb, "Cliente": cliente, "Piezas": piezas, "Peso_Kg": peso, "Dimensiones": dims, "Ubicacion": ubicacion, "Fecha_Ingreso": fecha_ingreso, "Tareas_Asignadas": "Ninguna", "Estado_Tarea": "N/A", "Retencion_DIAN": ret_dian}
             st.session_state.tabla_carga = pd.concat([st.session_state.tabla_carga, pd.DataFrame([nueva_carga])], ignore_index=True)
-            st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'] == ubicacion, 'Estado'] = 'Ocupado'
-            st.success(f"✔️ RECEPTION SUCCESSFUL: Guía {awb} guardada.")
-            st.rerun()
-
-elif modulo == "Control de Inventario & Traslados":
-    st.subheader("📦 MÓDULO: Almacenamiento, Control de Inventarios & Traslados")
-    st.markdown("### 📋 Stock Actual en Bodega")
-    st.dataframe(st.session_state.tabla_carga, use_container_width=True)
-    
-    st.markdown("### 🔄 Reubicación / Traslado Interno")
-    if not st.session_state.tabla_carga.empty:
-        awb_mover = st.selectbox("Seleccione la AWB a trasladar:", st.session_state.tabla_carga['AWB'])
-        df_libres = st.session_state.mapa_bodega[st.session_state.mapa_bodega['Estado'] == 'Libre']
-        nueva_ub = st.selectbox("Seleccione la nueva ubicación destino:", df_libres['Codigo_Ubicacion'])
-        
-        if st.button("🔄 Confirmar Movimiento de Montacargas"):
-            ub_antigua = st.session_state.tabla_carga.loc[st.session_state.tabla_carga['AWB'] == awb_mover, 'Ubicacion'].values[0]
-            st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'] == ub_antigua, 'Estado'] = 'Libre'
-            st.session_state.mapa_bodega.loc[st.session_state.mapa_bodega['Codigo_Ubicacion'] == nueva_ub, 'Estado'] = 'Ocupado'
-            st.session_state.tabla_carga.loc[st.session_state.tabla_carga['AWB'] == awb_mover, 'Ubicacion'] = nueva_ub
-            st.success(f"✔️ TRANSFER SUCCESSFUL: Carga trasladada.")
-            st.rerun()
-
-elif modulo == "Operaciones & Tareas Especiales":
-    st.subheader("📋 MÓDULO: Control de Tareas Especiales sobre la Carga")
-    if not st.session_state.tabla_carga.empty:
-        awb_tarea = st.selectbox("Seleccione AWB para programar operación:", st.session_state.tabla_carga['AWB'])
