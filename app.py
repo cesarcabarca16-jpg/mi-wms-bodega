@@ -122,7 +122,7 @@ if rol == "Operario / Montacarguista":
                 
             if cod_fondo:
                 fila_fondo = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == cod_fondo]
-                if not fila_fondo.empty and (fila_fondo['Estado'].values[0] == "Libre"):
+                if not fila_fondo.empty and (fila_fondo['Estado'].values == "Libre"):
                     st.warning(f"⚠️ **Alerta Logística:** Está guardando en el Frente ({ubicacion}) pero el Fondo ({cod_fondo}) está libre. Optimice el espacio usando primero el fondo.")
             
             if "SEGURIDAD" in ubicacion:
@@ -143,4 +143,6 @@ if rol == "Operario / Montacarguista":
     with tab2:
         st.subheader("Buscador rápido de posiciones")
         buscar = st.text_input("Escriba el producto que va a retirar:")
-        if buscar:
+        
+        # --- BUSCADOR COMPACTADO SIN ERRORES DE SANGRE ---
+        if buscar.strip():
