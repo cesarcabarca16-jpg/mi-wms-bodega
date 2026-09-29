@@ -12,64 +12,55 @@ st.markdown("### Control de Operación de Bodega con Usuarios Ilimitados")
 def generar_bodega_real():
     lista_ubicaciones = []
     
-    # 1. PASILLO ALPHA (A) -> Posiciones 1 a 9, Niveles 1 a 5, Módulos 1 y 2
+    # 1. PASILLO ALPHA (A)
     for pos in range(1, 10):      
         for nivel in range(1, 6): 
             for lado_num in range(1, 3):   
                 cod = f"A{pos:02d}{nivel:02d}{lado_num:02d}"
-                lista_ubicaciones.append({
-                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Alpha", "Nivel": f"Nivel {nivel}",
-                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
-                })
+                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Alpha", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
                 
-    # 2. PASILLO BRAVO (B) -> Posiciones 1 a 8, Niveles 1 a 5, Módulos 1 y 2 + Intermedios
+    # 2. PASILLO BRAVO (B)
     for pos in range(1, 9):       
         for nivel in range(1, 6):
             for lado_num in range(1, 3):
                 cod = f"B{pos:02d}{nivel:02d}{lado_num:02d}"
-                lista_ubicaciones.append({
-                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Bravo", "Nivel": f"Nivel {nivel}",
-                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
-                })
+                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Bravo", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"B{pos:02d}A", "Pasillo_Zona": "Bravo", "Nivel": "Intermedio (Frente)", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"B{pos:02d}B", "Pasillo_Zona": "Bravo", "Nivel": "Intermedio (Fondo)", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 3. PASILLO CHARLIE (C) -> Posiciones 1 a 7, Niveles 1 a 5, Módulos 1 y 2 + Intermedios
+    # 3. PASILLO CHARLIE (C)
     for pos in range(1, 8):       
         for nivel in range(1, 6):
             for lado_num in range(1, 3):
                 cod = f"C{pos:02d}{nivel:02d}{lado_num:02d}"
-                lista_ubicaciones.append({
-                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Charlie", "Nivel": f"Nivel {nivel}",
-                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
-                })
+                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Charlie", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"C{pos:02d}A", "Pasillo_Zona": "Charlie", "Nivel": "Intermedio (Frente)", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"C{pos:02d}B", "Pasillo_Zona": "Charlie", "Nivel": "Intermedio (Fondo)", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
     # 4. PASILLOS CON DOBLE PROFUNDIDAD ESTÁNDAR (Foxtrot, Golfo, November)
     pasillos_dobles = [("Foxtrot", 7), ("Golfo", 7), ("November", 4)]
     for p_nombre, max_pos in pasillos_dobles:
-        p_letra = p_nombre[0]
+        p_letra = p_nombre
         for pos in range(1, max_pos + 1):       
             for nivel in range(1, 6):
                 for lado_num in range(1, 3):
                     lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
                     lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 5. PASILLO HOTEL (H) -> Posiciones 1 a 3, Niveles 1 a 5, Módulos 1 y 2
+    # 5. PASILLO HOTEL (H)
     for pos in range(1, 4):
         for nivel in range(1, 6):
             for lado_num in range(1, 3):
                 lista_ubicaciones.append({"Codigo_Ubicacion": f"H{pos:02d}{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "Hotel", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 6. PASILLOS MIKE (M1 Doble y M2 Sencillo) -> Posición 1, Niveles 1 a 5, Módulos 1 y 2
+    # 6. PASILLOS MIKE (M1 y M2)
     for nivel in range(1, 6):
         for lado_num in range(1, 3):
             lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
             lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
             lista_ubicaciones.append({"Codigo_Ubicacion": f"M2-01{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "Mike 2", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 7. PASILLO KILO (K) -> K01 Sencillo, K02 a K07 Doble Profundidad
+    # 7. PASILLO KILO (K)
     for pos in range(1, 8):
         for nivel in range(1, 6):
             for lado_num in range(1, 3):
@@ -79,7 +70,7 @@ def generar_bodega_real():
                     lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
                     lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 8. PASILLO INDIA (I) -> Posición 1 y 2, 6 Niveles de Altura, Módulos 1 y 2
+    # 8. PASILLO INDIA (I)
     for pos in range(1, 3):
         for nivel in range(1, 7): 
             for lado_num in range(1, 3):
@@ -120,7 +111,7 @@ if rol == "Operario / Montacarguista":
                 
             if cod_fondo:
                 fila_fondo = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == cod_fondo]
-                if not fila_fondo.empty and (fila_fondo['Estado'].values[0] == "Libre"):
+                if not fila_fondo.empty and (fila_fondo['Estado'].values == "Libre"):
                     st.warning(f"⚠️ **Alerta Logística:** Está guardando en el Frente ({ubicacion}) pero el Fondo ({cod_fondo}) está libre. Optimice el espacio usando primero el fondo.")
             
             if "SEGURIDAD" in ubicacion: st.info("🔒 **Control de Seguridad:** Esta ubicación requiere registro de precinto en bitácora manual.")
@@ -129,7 +120,6 @@ if rol == "Operario / Montacarguista":
             btn_confirmar = st.form_submit_button("Confirmar Ubicación en Bodega")
             
             if btn_confirmar and sku:
-                # --- ACTUALIZACIÓN DIRECTA UTILIZANDO .LOC PARA MODIFICAR ÍNDICES ---
                 st.session_state.inventario.loc[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion, ['Estado', 'Producto', 'Cantidad']] = ['Ocupado', sku, cant]
                 st.success(f"✔️ Operación exitosa. Ubicación {ubicacion} actualizada a OCUPADA.")
                 st.markdown("""<meta http-equiv="refresh" content="0">""", unsafe_allow_html=True)
@@ -137,5 +127,17 @@ if rol == "Operario / Montacarguista":
     with tab2:
         st.subheader("Buscador rápido de posiciones")
         buscar = st.text_input("Escriba el producto que va a retirar:")
+        # --- BUSCADOR ULTRA PLANO SIN CONDICIONALES 'IF' COMPLEJOS ---
         df_ocupados = st.session_state.inventario[st.session_state.inventario['Estado'] == 'Ocupado']
-        if buscar:
+        df_filtrado = df_ocupados[df_ocupados['Producto'].str.contains(buscar, case=False)]
+        st.dataframe(df_filtrado[['Producto', 'Pasillo_Zona', 'Codigo_Ubicacion', 'Nivel']], use_container_width=True)
+
+else:
+    st.header("📊 Panel de Control Directivo (Gerencia)")
+    c1, c2, c3 = st.columns(3)
+    c1.metric(label="Costo de Licencias Nuevas", value="$0 USD", delta="Ahorro del 100% vs Magaya")
+    
+    total_pos = len(st.session_state.inventario)
+    ocupadas = len(st.session_state.inventario[st.session_state.inventario['Estado'] == 'Ocupado'])
+    pct = (ocupadas / total_pos) * 100
+    
