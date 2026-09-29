@@ -7,34 +7,42 @@ st.set_page_config(page_title="WMS Personalizado - Demo Gerencial", page_icon="�
 st.title("📦 Sistema WMS In-House - Prototipo Real")
 st.markdown("### Control de Operación de Bodega con Usuarios Ilimitados")
 
-# --- GENERADOR ROBUSTO DEL MAPA DE TU BODEGA ---
+# --- GENERADOR ROBUSTO DEL MAPA DE TU BODEGA REAL ---
 @st.cache_data
 def generar_bodega_real():
     lista_ubicaciones = []
-    lados = ["01", "02"]
     
-    # 1. PASILLO ALPHA (A) -> Posiciones 1 a 9, Niveles 1 a 5, Lados 01 y 02
+    # 1. PASILLO ALPHA (A) -> Posiciones 1 a 9, Niveles 1 a 5, Módulos 1 y 2
     for pos in range(1, 10):      
         for nivel in range(1, 6): 
-            for ld in lados:
-                cod = f"A{pos:02d}{nivel:02d}{ld}"
-                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Alpha", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            for lado_num in range(1, 3):   
+                cod = f"A{pos:02d}{nivel:02d}{lado_num:02d}"
+                lista_ubicaciones.append({
+                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Alpha", "Nivel": f"Nivel {nivel}",
+                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
+                })
                 
-    # 2. PASILLO BRAVO (B) -> Posiciones 1 a 8, Niveles 1 a 5, Lados 01 y 02 + Intermedios A y B
+    # 2. PASILLO BRAVO (B) -> Posiciones 1 a 8, Niveles 1 a 5, Módulos 1 y 2 + Intermedios
     for pos in range(1, 9):       
         for nivel in range(1, 6):
-            for ld in lados:
-                cod = f"B{pos:02d}{nivel:02d}{ld}"
-                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Bravo", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            for lado_num in range(1, 3):
+                cod = f"B{pos:02d}{nivel:02d}{lado_num:02d}"
+                lista_ubicaciones.append({
+                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Bravo", "Nivel": f"Nivel {nivel}",
+                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
+                })
         lista_ubicaciones.append({"Codigo_Ubicacion": f"B{pos:02d}A", "Pasillo_Zona": "Bravo", "Nivel": "Intermedio (Frente)", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"B{pos:02d}B", "Pasillo_Zona": "Bravo", "Nivel": "Intermedio (Fondo)", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 3. PASILLO CHARLIE (C) -> Posiciones 1 a 7, Niveles 1 a 5, Lados 01 y 02 + Intermedios A y B
+    # 3. PASILLO CHARLIE (C) -> Posiciones 1 a 7, Niveles 1 a 5, Módulos 1 y 2 + Intermedios
     for pos in range(1, 8):       
         for nivel in range(1, 6):
-            for ld in lados:
-                cod = f"C{pos:02d}{nivel:02d}{ld}"
-                lista_ubicaciones.append({"Codigo_Ubicacion": cod, "Pasillo_Zona": "Charlie", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            for lado_num in range(1, 3):
+                cod = f"C{pos:02d}{nivel:02d}{lado_num:02d}"
+                lista_ubicaciones.append({
+                    "Codigo_Ubicacion": cod, "Pasillo_Zona": "Charlie", "Nivel": f"Nivel {nivel}",
+                    "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0
+                })
         lista_ubicaciones.append({"Codigo_Ubicacion": f"C{pos:02d}A", "Pasillo_Zona": "Charlie", "Nivel": "Intermedio (Frente)", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
         lista_ubicaciones.append({"Codigo_Ubicacion": f"C{pos:02d}B", "Pasillo_Zona": "Charlie", "Nivel": "Intermedio (Fondo)", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
@@ -44,38 +52,38 @@ def generar_bodega_real():
         p_letra = p_nombre[0]
         for pos in range(1, max_pos + 1):       
             for nivel in range(1, 6):
-                for ld in lados:
-                    lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{ld}-FR", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
-                    lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{ld}-FO", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+                for lado_num in range(1, 3):
+                    lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+                    lista_ubicaciones.append({"Codigo_Ubicacion": f"{p_letra}{pos:02d}{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": p_nombre, "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 5. PASILLO HOTEL (H) -> Posiciones 1 a 3, Niveles 1 a 5, Lados 01 y 02
+    # 5. PASILLO HOTEL (H) -> Posiciones 1 a 3, Niveles 1 a 5, Módulos 1 y 2
     for pos in range(1, 4):
         for nivel in range(1, 6):
-            for ld in lados:
-                lista_ubicaciones.append({"Codigo_Ubicacion": f"H{pos:02d}{nivel:02d}{ld}", "Pasillo_Zona": "Hotel", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            for lado_num in range(1, 3):
+                lista_ubicaciones.append({"Codigo_Ubicacion": f"H{pos:02d}{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "Hotel", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 6. PASILLOS MIKE (M1 y M2) -> Posición 1, Niveles 1 a 5, Lados 01 y 02
+    # 6. PASILLOS MIKE (M1 Doble y M2 Sencillo) -> Posición 1, Niveles 1 a 5, Módulos 1 y 2
     for nivel in range(1, 6):
-        for ld in lados:
-            lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{ld}-FR", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
-            lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{ld}-FO", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
-            lista_ubicaciones.append({"Codigo_Ubicacion": f"M2-01{nivel:02d}{ld}", "Pasillo_Zona": "Mike 2", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+        for lado_num in range(1, 3):
+            lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            lista_ubicaciones.append({"Codigo_Ubicacion": f"M1-01{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": "Mike 1", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            lista_ubicaciones.append({"Codigo_Ubicacion": f"M2-01{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "Mike 2", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
     # 7. PASILLO KILO (K) -> K01 Sencillo, K02 a K07 Doble Profundidad
     for pos in range(1, 8):
         for nivel in range(1, 6):
-            for ld in lados:
+            for lado_num in range(1, 3):
                 if pos == 1:
-                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{ld}", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
                 else:
-                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{ld}-FR", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
-                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{ld}-FO", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{lado_num:02d}-FR", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Frente)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+                    lista_ubicaciones.append({"Codigo_Ubicacion": f"K{pos:02d}{nivel:02d}{lado_num:02d}-FO", "Pasillo_Zona": "Kilo", "Nivel": f"Nivel {nivel}", "Profundidad": "Doble (Fondo)", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
-    # 8. PASILLO INDIA (I) -> Posición 1 y 2, 6 Niveles de Altura, Lados 01 y 02
+    # 8. PASILLO INDIA (I) -> Posición 1 y 2, 6 Niveles de Altura, Módulos 1 y 2
     for pos in range(1, 3):
         for nivel in range(1, 7): 
-            for ld in lados:
-                lista_ubicaciones.append({"Codigo_Ubicacion": f"I{pos:02d}{nivel:02d}{ld}", "Pasillo_Zona": "India", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
+            for lado_num in range(1, 3):
+                lista_ubicaciones.append({"Codigo_Ubicacion": f"I{pos:02d}{nivel:02d}{lado_num:02d}", "Pasillo_Zona": "India", "Nivel": f"Nivel {nivel}", "Profundidad": "Estándar", "Estado": "Libre", "Producto": "Ninguno", "Cantidad": 0})
 
     # 9. ZONAS DE PISO, SÓTANO, CUARTOS ESPECIALES
     zonas_especiales = [("Bodega 1 Piso", "B1-PISO"), ("Bodega 2 Piso", "B2-PISO"), ("Sótano", "SOTANO"), ("Cuarto Seguridad", "SEGURIDAD"), ("Cuarto Frío", "FRIO")]
@@ -121,23 +129,13 @@ if rol == "Operario / Montacarguista":
             btn_confirmar = st.form_submit_button("Confirmar Ubicación en Bodega")
             
             if btn_confirmar and sku:
-                idx = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion].index
-                st.session_state.inventario.at[idx, 'Estado'] = 'Ocupado'
-                st.session_state.inventario.at[idx, 'Producto'] = sku
-                st.session_state.inventario.at[idx, 'Cantidad'] = cant
+                # --- ACTUALIZACIÓN DIRECTA UTILIZANDO .LOC PARA MODIFICAR ÍNDICES ---
+                st.session_state.inventario.loc[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion, ['Estado', 'Producto', 'Cantidad']] = ['Ocupado', sku, cant]
                 st.success(f"✔️ Operación exitosa. Ubicación {ubicacion} actualizada a OCUPADA.")
-                st.rerun()
+                st.markdown("""<meta http-equiv="refresh" content="0">""", unsafe_allow_html=True)
 
     with tab2:
         st.subheader("Buscador rápido de posiciones")
         buscar = st.text_input("Escriba el producto que va a retirar:")
         df_ocupados = st.session_state.inventario[st.session_state.inventario['Estado'] == 'Ocupado']
         if buscar:
-            df_res = df_ocupados[df_ocupados['Producto'].str.contains(buscar, case=False)]
-            st.dataframe(df_res[['Producto', 'Pasillo_Zona', 'Codigo_Ubicacion', 'Nivel']], use_container_width=True)
-        else:
-            st.dataframe(df_ocupados[['Producto', 'Pasillo_Zona', 'Codigo_Ubicacion', 'Nivel']], use_container_width=True)
-
-else:
-    st.header("📊 Panel de Control Directivo (Gerencia)")
-    c1, c2, c3 = st.columns(3)
