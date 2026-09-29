@@ -1,13 +1,60 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
-# Configuración de la página de la Demo
-st.set_page_config(page_title="WMS Personalizado - Demo Gerencial", page_icon="📦", layout="wide")
+# Configuración de pantalla estilo Terminal Corporativa (Magaya Look)
+st.set_page_config(page_title="Magaya Custom WMS Interface", page_icon="⚙️", layout="wide")
 
-st.title("📦 Sistema WMS In-House - Prototipo Real")
-st.markdown("### Control de Operación de Bodega con Usuarios Ilimitados")
+# --- ESTILOS CSS PARA IMITAR EL LOOK GRIS DE MAGAYA ---
+st.markdown("""
+    <style>
+    .reportview-container { background: #f0f2f5; }
+    .stButton>button {
+        background-color: #2b579a;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        width: 100%;
+        height: 45px;
+    }
+    .stButton>button:hover { background-color: #1e3d73; color: white; }
+    .magaya-header {
+        background-color: #1f3a60;
+        color: white;
+        padding: 12px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .status-bar {
+        background-color: #e2e8f0;
+        padding: 8px;
+        border-radius: 4px;
+        border-left: 5px solid #2b579a;
+        font-size: 13px;
+        font-family: monospace;
+        margin-bottom: 15px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# --- GENERADOR ROBUSTO DEL MAPA DE TU BODEGA REAL ---
+# --- CABECERA ESTILO MAGAYA ECOSYSTEM ---
+st.markdown("""
+    <div class="magaya-header">
+        <h2 style='margin:0; color:white;'>⚙️ MAGAYA WORKSPACE - IN-HOUSE EXTENSION</h2>
+        <span style='font-size:12px;'>Subsistema de Operación de Bodega Local | Licencias Operarios: ILIMITADAS</span>
+    </div>
+""", unsafe_allow_html=True)
+
+# Barra de estado del sistema en tiempo real
+fecha_actual = datetime.now().strftime("%d/%m/%Y %H:%M")
+st.markdown(f"""
+    <div class="status-bar">
+        <strong>ESTADO:</strong> ONLINE | <strong>ESTACIÓN:</strong> BODEGA_BOGOTA_01 | <strong>FECHA/HORA:</strong> {fecha_actual} | <strong>CONEXIÓN:</strong> SERVIDOR_LOCAL
+    </div>
+""", unsafe_allow_html=True)
+
+# --- GENERADOR ROBUSTO DEL MAPA DE TU BODEGA ---
 @st.cache_data
 def generar_bodega_real():
     lista_ubicaciones = []
@@ -85,28 +132,33 @@ def generar_bodega_real():
 
     return pd.DataFrame(lista_ubicaciones)
 
-# Cargar bodega en la sesión del navegador de forma permanente
 if 'inventario' not in st.session_state:
     st.session_state.inventario = generar_bodega_real()
 
-# --- INTERFAZ DE LA APLICACIÓN ---
-st.sidebar.header("🕹️ Panel de Navegación")
-rol = st.sidebar.selectbox("Seleccione el Rol:", ["Operario / Montacarguista", "Gerencia / Supervisor"])
+# --- MENÚ LATERAL: CONTROL DE VISTA ---
+st.sidebar.markdown("### 🖥️ CONTROL DE MÓDULOS")
+rol = st.sidebar.selectbox("Seleccione Modo de Interfaz:", ["Operaciones de Bodega (Móvil)", "Live Map & Control Gerencial"])
 
-if rol == "Operario / Montacarguista":
-    st.header("📲 Interfaz Móvil para Equipos (Montacargas)")
-    tab1, tab2 = st.tabs(["📥 Entrada / Almacenar", "🔍 Localizar Producto"])
+# --- MODULO 1: OPERACIONES DE BODEGA ---
+if "Operaciones de Bodega" in rol:
+    # Emulando los submódulos clásicos del menú lateral de Magaya
+    opcion_bodega = st.sidebar.radio("Documentos de Almacén:", ["📥 Warehouse Receipt (Recibo)", "📤 Cargo Release (Salida/Picking)", "🔍 Location Finder (Buscador)"])
     
-    with tab1:
-        st.subheader("Registrar movimiento de montacargas")
+    # MÓDULO RECIBO (Warehouse Receipt)
+    if "Warehouse Receipt" in opcion_bodega:
+        st.subheader("📝 COMPONENT: Warehouse Receipt (Ingreso de Carga)")
         df_libres = st.session_state.inventario[st.session_state.inventario['Estado'] == 'Libre']
         
-        with st.form("guardar_paleta"):
-            sku = st.text_input("Ingrese SKU o Nombre del Producto:", placeholder="Ej: Paleta Llantas 15")
-            cant = st.number_input("Cantidad de Paletas / Cajas:", min_value=1, value=1)
-            ubicacion = st.selectbox("Seleccione Código de Ubicación Destino:", df_libres['Codigo_Ubicacion'])
+        with st.form("magaya_wr_form"):
+            col_a, col_b = st.columns(2)
+            with col_a:
+                sku = st.text_input("Commodity Name / SKU / Paleta ID:", placeholder="Ej: Paleta Repuestos ABC")
+                cant = st.number_input("Quantity (Unidades/Paletas):", min_value=1, value=1)
+            with col_b:
+                ubicacion = st.selectbox("Assign Location (Ubicaciones Libres):", df_libres['Codigo_Ubicacion'])
+                shipper = st.text_input("Shipper / Cliente Ospitante:", value="Cliente Genérico S.A.")
             
-            # --- LÓGICA DE VALIDACIÓN PARA DOBLE PROFUNDIDAD Y CUARTOS ---
+            # Validaciones lógicas de doble profundidad
             cod_fondo = ""
             if ubicacion.endswith("A"): cod_fondo = ubicacion.replace("A", "B")
             elif ubicacion.endswith("-FR"): cod_fondo = ubicacion.replace("-FR", "-FO")
@@ -114,34 +166,5 @@ if rol == "Operario / Montacarguista":
             if cod_fondo:
                 fila_fondo = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == cod_fondo]
                 if not fila_fondo.empty and (fila_fondo['Estado'].values == "Libre"):
-                    st.warning(f"⚠️ **Alerta Logística:** Está guardando en el Frente ({ubicacion}) pero el Fondo ({cod_fondo}) está libre. Optimice el espacio usando primero el fondo.")
+                    st.warning(f"⚠️ LOGISTIC ALERT (LIFO): Está intentando ubicar en el Frente ({ubicacion}) pero el Fondo ({cod_fondo}) está vacío. Se sugiere reubicar primero al Fondo.")
             
-            if "SEGURIDAD" in ubicacion: st.info("🔒 **Control de Seguridad:** Esta ubicación requiere registro de precinto en bitácora manual.")
-            elif "FRIO" in ubicacion: st.info("❄️ **Cadena de Frío:** Recuerde validar que el producto tolere refrigeración antes de confirmar.")
-
-            btn_confirmar = st.form_submit_button("Confirmar Ubicación en Bodega")
-            
-            if btn_confirmar and sku:
-                # --- ACTUALIZACIÓN CON PERSISTENCIA EN EL ESTADO DE LA SESIÓN ---
-                st.session_state.inventario.loc[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion, ['Estado', 'Producto', 'Cantidad']] = ['Ocupado', sku, cant]
-                st.success(f"✔️ Operación exitosa. Ubicación {ubicacion} actualizada a OCUPADA.")
-                st.rerun()
-
-    with tab2:
-        st.subheader("Buscador rápido de posiciones")
-        buscar = st.text_input("Escriba el producto que va a retirar:")
-        
-        # --- BUSCADOR CONECTADO A LA MEMORIA PERSISTENTE ---
-        df_actual = st.session_state.inventario
-        df_ocupados = df_actual[df_actual['Estado'] == 'Ocupado']
-        
-        if buscar:
-            df_filtrado = df_ocupados[df_ocupados['Producto'].str.contains(buscar, case=False)]
-            if not df_filtrado.empty:
-                st.success(f"📍 Producto localizado en {len(df_filtrado)} posiciones:")
-                st.dataframe(df_filtrado[['Producto', 'Cantidad', 'Pasillo_Zona', 'Codigo_Ubicacion', 'Nivel']], use_container_width=True)
-            else:
-                st.error("Ese producto no se encuentra registrado en ninguna ubicación ocupada.")
-        else:
-            st.info("💡 Digite el nombre del producto arriba para localizar su pasillo y código. Actualmente estas son las posiciones ocupadas:")
-            st.dataframe(df_ocupados[['Producto', 'Cantidad', 'Pasillo_Zona', 'Codigo_Ubicacion', 'Nivel']], use_container_width=True)
