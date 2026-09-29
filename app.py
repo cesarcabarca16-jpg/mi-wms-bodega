@@ -49,7 +49,7 @@ def generar_bodega_real():
     # 4. PASILLOS CON DOBLE PROFUNDIDAD ESTÁNDAR (Foxtrot, Golfo, November)
     pasillos_dobles = [("Foxtrot", 7), ("Golfo", 7), ("November", 4)]
     for p_nombre, max_pos in pasillos_dobles:
-        p_letra = p_nombre[0]  # F, G, N
+        p_letra = p_nombre
         for pos in range(1, max_pos + 1):       
             for nivel in range(1, 6):
                 for lado_num in range(1, 3):
@@ -120,7 +120,7 @@ if rol == "Operario / Montacarguista":
                 
             if cod_fondo:
                 fila_fondo = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == cod_fondo]
-                if not fila_fondo.empty and fila_fondo['Estado'].values == "Libre":
+                if not fila_fondo.empty and (fila_fondo['Estado'].values[0] == "Libre"):
                     st.warning(f"⚠️ **Alerta Logística:** Está guardando en el Frente ({ubicacion}) pero el Fondo ({cod_fondo}) está libre. Optimice el espacio usando primero el fondo.")
             
             if "SEGURIDAD" in ubicacion:
@@ -131,7 +131,8 @@ if rol == "Operario / Montacarguista":
             btn_confirmar = st.form_submit_button("Confirmar Ubicación en Bodega")
             
             if btn_confirmar and sku:
-                idx = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion].index
+                # --- SOLUCIÓN DEL ERROR USANDO EL ÍNDICE CORRECTO (.index[0]) ---
+                idx = st.session_state.inventario[st.session_state.inventario['Codigo_Ubicacion'] == ubicacion].index[0]
                 st.session_state.inventario.at[idx, 'Estado'] = 'Ocupado'
                 st.session_state.inventario.at[idx, 'Producto'] = sku
                 st.session_state.inventario.at[idx, 'Cantidad'] = cant
@@ -142,4 +143,3 @@ if rol == "Operario / Montacarguista":
         st.subheader("Buscador rápido de posiciones")
         buscar = st.text_input("Escriba el producto que va a retirar:")
         if buscar:
-            res = st.session_state.inventario[st.session_state.inventario['Producto'].str.contains(buscar, case=False)]
